@@ -45,14 +45,13 @@ function addMessage(who, message) {
         who,
         message,
     });
-    while (messageHistory.length > maxMessages) {
+    if (messageHistory.length > maxMessages) {
         messageHistory.shift(); // Remove the oldest message
     }
 }
 
 app.post("/messaging", async (req, res) => {
     const { who, message } = req.body;
-    idx++;
     addMessage(who, message);
     res.json(messageHistory);
 });
