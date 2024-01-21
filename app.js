@@ -20,7 +20,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 
-const maxMessages = 3;
+const maxMessages = 30;
 const messageHistory = [];
 let idx = 0;
 
@@ -28,7 +28,8 @@ wss.on("connection", (ws) => {
     ws.send(JSON.stringify(messageHistory));
     ws.on("message", (message) => {
         const newMessage = JSON.parse(message);
-        messageHistory.push(newMessage);
+        addMessage(newMessage);
+        // messageHistory.push(newMessage);
 
         wss.clients.forEach((client) => {
             if (client.readyState === WebSocket.OPEN) {
@@ -38,25 +39,25 @@ wss.on("connection", (ws) => {
     });
 });
 
-function addMessage(who, message) {
+function addMessage(newMessage) {
     idx++;
     messageHistory.push({
         idx,
-        who,
-        message,
+        ...newMessage,
     });
-    if (messageHistory.length >= maxMessages) {
+    if (messageHistory.length > maxMessages) {
+        // console.log("Shifting...");
         messageHistory.shift();
     }
-    console.log("Message History: ", messageHistory);
+    // console.log("Message History: ", messageHistory);
 }
 
-app.post("/messaging", async (req, res) => {
-    console.error("Adding");
-    const { who, message } = req.body;
-    addMessage(who, message);
-    res.json(messageHistory);
-});
+// app.post("/messaging", async (req, res) => {
+//     console.error("Adding");
+//     const { who, message } = req.body;
+
+//     res.json(messageHistory);
+// });
 
 app.get("/messaging", (req, res) => {
     res.json(messageHistory);
