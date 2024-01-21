@@ -20,6 +20,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 
+const maxMessages = 20;
 const messageHistory = [];
 let idx = 0;
 
@@ -37,17 +38,22 @@ wss.on("connection", (ws) => {
     });
 });
 
-app.post("/messaging", async (req, res) => {
-    const { who, message } = req.body;
+function addMessage(who, message) {
     idx++;
-    console.log("Who: ", who);
-    console.log("Message: ", message);
-    console.log("Idx: ", idx);
     messageHistory.push({
         idx,
         who,
         message,
     });
+    while (messageHistory.length > maxMessages) {
+        messageHistory.shift(); // Remove the oldest message
+    }
+}
+
+app.post("/messaging", async (req, res) => {
+    const { who, message } = req.body;
+    idx++;
+    addMessage(who, message);
     res.json(messageHistory);
 });
 
