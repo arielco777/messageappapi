@@ -13,10 +13,10 @@ const wss = new WebSocket.Server({ server });
 
 app.use(cors());
 app.use(express.json());
-app.use((req, res, next) => {
-    req.pool = pool;
-    next();
-});
+// app.use((req, res, next) => {
+//     req.pool = pool;
+//     next();
+// });
 
 // const apiw = "b1db1896338c8c8c789ee5d39c3ac43a";
 // app.get("/weather", async (req, res) => {
