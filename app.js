@@ -45,15 +45,14 @@ function addMessage(who, message) {
         who,
         message,
     });
-    if (messageHistory.length > maxMessages) {
-        console.log("Shifting...");
+    if (messageHistory.length >= maxMessages) {
         messageHistory.shift();
     }
     console.log("Message History: ", messageHistory);
 }
 
 app.post("/messaging", async (req, res) => {
-    console.log("Adding");
+    console.error("Adding");
     const { who, message } = req.body;
     addMessage(who, message);
     res.json(messageHistory);
